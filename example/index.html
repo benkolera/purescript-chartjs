@@ -1,0 +1,65 @@
+<html>
+<head>
+  <title>Purescript </title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, sans-serif;
+      color: #232830;
+      background-color: #778898;
+      text-align: center;
+    }
+    h1 {
+      line-height: 1.5em;
+    }
+    .container {
+      padding: 10px;
+      max-width: 500px;
+      background-color: #FFF;
+      margin: 0 auto;
+    }
+    .chart-container {
+      width: 90%;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <p>Check out the <a href="example.purs">purescript file</a> that set these graphs up.</p>
+  <h1>Line Chart</h1>
+  <div class="chart-container">
+    <canvas id="line-canvas" height="450" width="600"></canvas>
+  </div>
+  <h1>Bar Chart</h1>
+  <div class="chart-container">
+    <canvas id="bar-canvas" height="450" width="600"></canvas>
+  </div>
+  <h1>Radar Chart</h1>
+  <div class="chart-container">
+    <canvas id="radar-canvas" height="450" width="450"></canvas>
+  </div>
+  <h1>Polar Area Chart</h1>
+  <div class="chart-container">
+    <canvas id="polar-area-canvas" height="300" width="300"></canvas>
+  </div>
+  <h1>Pie Chart</h1>
+  <div class="chart-container">
+    <canvas id="pie-canvas" height="300" width="300"></canvas>
+  </div>
+  <h1>Doughnut Chart</h1>
+  <div class="chart-container">
+    <canvas id="doughnut-canvas" height="300" width="300"></canvas>
+  </div>
+  <script src="../bower_components/chartjs/Chart.min.js"></script>
+</div>
+</body>
+
+<script src="example.js"></script>
+<script>
+window.onload = function(){
+  Chart.defaults.global.responsive = true;
+  PS.Example.initGraphs();
+};
+</script>
+
+</html>
