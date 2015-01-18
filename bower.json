@@ -1,9 +1,11 @@
 {
   "name": "purescript-chartjs",
   "license": "MIT",
+  "version": "0.1.0",
   "authors": [
     "Ben Kolera <ben.kolera@gmail.com>"
   ],
+  "main": "src/ChartJs.purs",
   "ignore": [
     "**/.*",
     "bower_components",
