@@ -25,6 +25,8 @@
   },
   "devDependencies": {
     "purescript-foldable-traversable": "~0.2.1",
-    "purescript-exceptions": "~0.2.2"
+    "purescript-exceptions": "~0.2.2",
+    "purescript-jquery": "~0.3.0",
+    "jquery": "~2.1.3"
   }
 }

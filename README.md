@@ -1,8 +1,13 @@
 # purescript-chartjs
 Purescript bindings for [chartjs](http://chartjs.org).
 
-Note that right now it doesn't allow you to:
-  * Call any of the ChartType functions (update,remove,onClick,generateLegend,etc)
+It also packages a [css file](chartjs.css) that covers the default
+legend templates since chartjs doesn't seem to provide that in its
+bower distribution.
+
+Note that right now it doesn't:
+  * Have all of the ChartType functions (update,remove,onClick,etc)
+  * Be proven to work with all configurations.
 
 ## Installation
 ```

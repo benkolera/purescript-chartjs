@@ -1,6 +1,7 @@
 <html>
 <head>
-  <title>Purescript </title>
+  <title>Purescript ChartJs</title>
+  <link href="../chartjs.css" rel="stylesheet"/>
   <style>
     body {
       font-family: 'Helvetica Neue', Helvetica, sans-serif;
@@ -29,31 +30,38 @@
   <h1>Line Chart</h1>
   <div class="chart-container">
     <canvas id="line-canvas" height="450" width="600"></canvas>
+    <div class="legend" id="line-legend"> </div>
   </div>
   <h1>Bar Chart</h1>
   <div class="chart-container">
     <canvas id="bar-canvas" height="450" width="600"></canvas>
+    <div class="legend" id="bar-legend"> </div>
   </div>
   <h1>Radar Chart</h1>
   <div class="chart-container">
     <canvas id="radar-canvas" height="450" width="450"></canvas>
+    <div class="legend" id="radar-legend"> </div>
   </div>
   <h1>Polar Area Chart</h1>
   <div class="chart-container">
     <canvas id="polar-area-canvas" height="300" width="300"></canvas>
+    <div class="legend" id="polar-area-legend"> </div>
   </div>
   <h1>Pie Chart</h1>
   <div class="chart-container">
     <canvas id="pie-canvas" height="300" width="300"></canvas>
+    <div class="legend" id="pie-legend"> </div>
   </div>
   <h1>Doughnut Chart</h1>
   <div class="chart-container">
     <canvas id="doughnut-canvas" height="300" width="300"></canvas>
+    <div class="legend" id="doughnut-legend"> </div>
   </div>
-  <script src="../bower_components/chartjs/Chart.min.js"></script>
 </div>
 </body>
 
+<script src="../bower_components/chartjs/Chart.min.js"></script>
+<script src="../bower_components/jquery/dist/jquery.min.js"></script>
 <script src="example.js"></script>
 <script>
 window.onload = function(){

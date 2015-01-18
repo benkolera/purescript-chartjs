@@ -33,6 +33,9 @@ module ChartJs
   , defPieChartConfig
   , defDoughnutChartConfig
   , responsiveChartConfig
+
+  , generateLegend
+
   )where
 
 import Control.Monad.Eff
@@ -47,7 +50,6 @@ type ChartConfig =
   { animation              :: Boolean
   , animationSteps         :: Number
   , animationEasing        :: String
-  , legendTemplate         :: String
   , showScale              :: Boolean
   , scaleOverride          :: Boolean
   , scaleSteps             :: Maybe Number
@@ -113,6 +115,7 @@ type LineChartConfig =
   , scaleShowVerticalLines   :: Boolean
   , bezierCurve              :: Boolean
   , bezierCurveTension       :: Number
+  , legendTemplate           :: String
   , pointDot                 :: Boolean
   , pointDotRadius           :: Number
   , pointDotStrokeWidth      :: Number
@@ -143,6 +146,7 @@ type BarChartConfig =
   , scaleGridLineWidth       :: Number
   , scaleShowHorizontalLines :: Boolean
   , scaleShowVerticalLines   :: Boolean
+  , legendTemplate           :: String
   , barShowStroke            :: Boolean
   , barStrokeWidth           :: Number
   , barValueSpacing          :: Number
@@ -164,24 +168,25 @@ type RadarChartDataset =
   , data                 :: [Number]
   }
 type RadarChartConfig =
-  { global                   :: ChartConfig
-  , scaleShowLine            :: Boolean
-  , angleShowLineOut         :: Boolean
-  , scaleShowLabels          :: Boolean
-  , scaleBeginAtZero         :: Boolean
-  , angleLineColor :: String
-  , angleLineWidth :: Number
-  , pointLabelFontFamily :: String
-  , pointLabelFontStyle :: String
-  , pointLabelFontSize :: Number
-  , pointLabelFontColor :: String
-  , pointDot :: Boolean
-  , pointDotRadius :: Number
-  , pointDotStrokeWidth :: Number
+  { global                  :: ChartConfig
+  , scaleShowLine           :: Boolean
+  , angleShowLineOut        :: Boolean
+  , scaleShowLabels         :: Boolean
+  , scaleBeginAtZero        :: Boolean
+  , angleLineColor          :: String
+  , angleLineWidth          :: Number
+  , pointLabelFontFamily    :: String
+  , pointLabelFontStyle     :: String
+  , pointLabelFontSize      :: Number
+  , pointLabelFontColor     :: String
+  , legendTemplate          :: String
+  , pointDot                :: Boolean
+  , pointDotRadius          :: Number
+  , pointDotStrokeWidth     :: Number
   , pointHitDetectionRadius :: Number
-  , datasetStroke :: Boolean
-  , datasetStrokeWidth :: Number
-  , datasetFill :: Boolean
+  , datasetStroke           :: Boolean
+  , datasetStrokeWidth      :: Number
+  , datasetFill             :: Boolean
   }
 
 type PolarAreaChartData =
@@ -199,6 +204,7 @@ type PolarAreaChartConfig =
   , scaleBackdropPaddingY  :: Number
   , scaleBackdropPaddingX  :: Number
   , scaleShowLine          :: Boolean
+  , legendTemplate         :: String
   , segmentShowStroke      :: Boolean
   , segmentStrokeColor     :: String
   , segmentStrokeWidth     :: Number
@@ -225,6 +231,7 @@ type PieDoughnutChartConfig =
   , segmentShowStroke      :: Boolean
   , segmentStrokeColor     :: String
   , segmentStrokeWidth     :: Number
+  , legendTemplate         :: String
   , percentageInnerCutout  :: Number
   , animateRotate          :: Boolean
   , animateScale           :: Boolean
@@ -284,7 +291,6 @@ defGlobalChartConfig =
   , multiTooltipTemplate: "<%= value %>"
   , onAnimationProgress: (return unit :: Eff ( dom :: DOM ) Unit )
   , onAnimationComplete: (return unit :: Eff ( dom :: DOM ) Unit )
-  , legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
   }
 
 foreign import lineChart
@@ -313,21 +319,22 @@ foreign import lineChart
 
 defLineChartConfig :: LineChartConfig
 defLineChartConfig =
-  { global             : defGlobalChartConfig
-  , scaleShowGridLines : true
-  , scaleGridLineColor : "rgba(0,0,0,.05)"
-  , scaleGridLineWidth : 1
-  , scaleShowHorizontalLines: true
-  , scaleShowVerticalLines: true
-  , bezierCurve : true
-  , bezierCurveTension : 0.4
-  , pointDot : true
-  , pointDotRadius : 4
-  , pointDotStrokeWidth : 1
-  , pointHitDetectionRadius : 20
-  , datasetStroke : true
-  , datasetStrokeWidth : 2
-  , datasetFill : true
+  { global                   : defGlobalChartConfig
+  , scaleShowGridLines       : true
+  , scaleGridLineColor       : "rgba(0,0,0,.05)"
+  , scaleGridLineWidth       : 1
+  , scaleShowHorizontalLines : true
+  , scaleShowVerticalLines   : true
+  , bezierCurve              : true
+  , bezierCurveTension       : 0.4
+  , pointDot                 : true
+  , pointDotRadius           : 4
+  , pointDotStrokeWidth      : 1
+  , pointHitDetectionRadius  : 20
+  , datasetStroke            : true
+  , datasetStrokeWidth       : 2
+  , datasetFill              : true
+  , legendTemplate           : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
   }
 
 foreign import barChart
@@ -367,6 +374,7 @@ defBarChartConfig =
   , barStrokeWidth           : 2
   , barValueSpacing          : 5
   , barDatasetSpacing        : 1
+  , legendTemplate           : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
   }
 
 foreign import radarChart
@@ -413,6 +421,7 @@ defRadarChartConfig =
   , datasetStroke           : true
   , datasetStrokeWidth      : 2
   , datasetFill             : true
+  , legendTemplate          : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
   }
 
 
@@ -457,6 +466,7 @@ defPolarAreaChartConfig =
   , segmentStrokeWidth     : 2
   , animateRotate          : true
   , animateScale           : false
+  , legendTemplate         : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
   }
 
 foreign import doughnutChart
@@ -525,6 +535,7 @@ defPieDoughnutChartConfig cutout =
   , percentageInnerCutout  : cutout
   , animateRotate          : true
   , animateScale           : false
+  , legendTemplate         : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
   }
 
 responsiveChartConfig
@@ -532,3 +543,12 @@ responsiveChartConfig
    . { global :: ChartConfig | r }
   -> { global :: ChartConfig | r }
 responsiveChartConfig a = a { global = a.global { responsive = true } }
+
+foreign import generateLegend
+  """
+  function generateLegend(chartType) {
+    return function () {
+      return chartType.generateLegend();
+    }
+  }
+  """ :: forall eff. ChartType -> Eff ( dom :: DOM | eff ) String

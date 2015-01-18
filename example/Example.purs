@@ -3,27 +3,27 @@ module Example where
 import ChartJs
 import Control.Monad.Eff
 import Control.Monad.Eff.Exception
+import qualified Control.Monad.JQuery as J
 import Data.Maybe
 import Data.Traversable
 import Graphics.Canvas
 import DOM
 
 initGraphs :: forall eff. Eff( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
-initGraphs = do
-  initGraph "line-canvas" initLine
-  initGraph "bar-canvas" initBar
-  initGraph "radar-canvas" initRadar
-  initGraph "polar-area-canvas" initPolarArea
-  initGraph "doughnut-canvas" initDoughnut
-  initGraph "pie-canvas" initPie
+initGraphs = void <<< J.ready $ do
+  initGraph "line" initLine
+  initGraph "bar" initBar
+  initGraph "radar" initRadar
+  initGraph "polar-area" initPolarArea
+  initGraph "doughnut" initDoughnut
+  initGraph "pie" initPie
 
 initLine
   :: forall eff
    . Chart
-  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
-initLine c = do
+  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) ChartType
+initLine c =
   lineChart c lineData (responsiveChartConfig defLineChartConfig)
-  pure unit
   where
     lineData = {
       labels : ["January","February","March","April","May","June","July"],
@@ -52,10 +52,9 @@ initLine c = do
 initBar
   :: forall eff
    . Chart
-  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
-initBar c = do
+  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) ChartType
+initBar c =
   barChart c barData (responsiveChartConfig defBarChartConfig)
-  pure unit
   where
     barData = {
       labels : ["January","February","March","April","May","June","July"],
@@ -77,10 +76,9 @@ initBar c = do
 initRadar
   :: forall eff
    . Chart
-  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
-initRadar c = do
+  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) ChartType
+initRadar c =
   radarChart c radarData (responsiveChartConfig defRadarChartConfig)
-  pure unit
   where
     radarData = {
       labels: ["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"],
@@ -108,27 +106,23 @@ initRadar c = do
 initPolarArea
   :: forall eff
    . Chart
-  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
-initPolarArea c = do
+  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) ChartType
+initPolarArea c =
   polarAreaChart c pieDoughnutData (responsiveChartConfig defPolarAreaChartConfig)
-  pure unit
 
 initPie
   :: forall eff
    . Chart
-  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
-initPie c = do
+  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) ChartType
+initPie c =
   pieChart c pieDoughnutData (responsiveChartConfig defPieChartConfig)
-  pure unit
 
 initDoughnut
   :: forall eff
    . Chart
-  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
-initDoughnut c = do
+  -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) ChartType
+initDoughnut c =
   doughnutChart c pieDoughnutData (responsiveChartConfig defDoughnutChartConfig)
-  pure unit
-
 
 pieDoughnutData = [
   { value: 300
@@ -160,14 +154,20 @@ pieDoughnutData = [
 initGraph
   :: forall eff
    . String
-  -> (Chart -> Eff( dom :: DOM , err :: Exception, canvas :: Canvas | eff ) Unit)
+  -> (Chart -> Eff( dom :: DOM , err :: Exception, canvas :: Canvas | eff ) ChartType)
   -> Eff ( dom :: DOM , err :: Exception, canvas :: Canvas | eff ) Unit
-initGraph cId f = do
-  cMay  <- getCanvasElementById(cId)
+initGraph name f = void $ do
+  cMay  <- getCanvasElementById cId
   c     <- maybe (die $ "Could not find canvas: " <> cId) pure cMay
   ctx   <- getContext2D c
   chart <- newChart ctx
-  f chart
+  ct    <- f chart
+  lt    <- generateLegend ct
+  leg   <- J.select $ "#" <> lId
+  J.appendText lt leg
+  where
+    cId = name <> "-canvas"
+    lId = name <> "-legend"
 
 die :: forall eff a. String -> Eff( err:: Exception | eff ) a
 die = error >>> throwException
