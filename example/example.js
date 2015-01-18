@@ -4048,6 +4048,25 @@ PS.ChartJs = (function () {
     }
   }
   ;
+    var responsiveChartConfig = function (a) {
+        var _763 = {};
+        for (var _764 in a) {
+            if (a.hasOwnProperty(_764)) {
+                _763[_764] = a[_764];
+            };
+        };
+        _763.global = (function () {
+            var _761 = {};
+            for (var _762 in a.global) {
+                if (a.global.hasOwnProperty(_762)) {
+                    _761[_762] = a.global[_762];
+                };
+            };
+            _761.responsive = true;
+            return _761;
+        })();
+        return _763;
+    };
     var defGlobalChartConfig = {
         animation: true, 
         animationSteps: 60, 
@@ -4112,15 +4131,15 @@ PS.ChartJs = (function () {
     var defPieDoughnutChartConfig = function (cutout) {
         return {
             global: (function () {
-                var _761 = {};
-                for (var _762 in defGlobalChartConfig) {
-                    if (defGlobalChartConfig.hasOwnProperty(_762)) {
-                        _761[_762] = defGlobalChartConfig[_762];
+                var _765 = {};
+                for (var _766 in defGlobalChartConfig) {
+                    if (defGlobalChartConfig.hasOwnProperty(_766)) {
+                        _765[_766] = defGlobalChartConfig[_766];
                     };
                 };
-                _761.animationSteps = 100;
-                _761.animationEasing = "easeOutBounce";
-                return _761;
+                _765.animationSteps = 100;
+                _765.animationEasing = "easeOutBounce";
+                return _765;
             })(), 
             segmentShowStroke: true, 
             segmentStrokeColor: "#fff", 
@@ -4133,15 +4152,15 @@ PS.ChartJs = (function () {
     var defPieChartConfig = defPieDoughnutChartConfig(0);
     var defPolarAreaChartConfig = {
         global: (function () {
-            var _763 = {};
-            for (var _764 in defGlobalChartConfig) {
-                if (defGlobalChartConfig.hasOwnProperty(_764)) {
-                    _763[_764] = defGlobalChartConfig[_764];
+            var _767 = {};
+            for (var _768 in defGlobalChartConfig) {
+                if (defGlobalChartConfig.hasOwnProperty(_768)) {
+                    _767[_768] = defGlobalChartConfig[_768];
                 };
             };
-            _763.animationSteps = 100;
-            _763.animationEasing = "easeOutBounce";
-            return _763;
+            _767.animationSteps = 100;
+            _767.animationEasing = "easeOutBounce";
+            return _767;
         })(), 
         scaleShowLabelBackdrop: true, 
         scaleBackdropColor: "rgba(255,255,255,0.75)", 
@@ -4203,7 +4222,8 @@ PS.ChartJs = (function () {
         newChart: newChart, 
         pieChart: pieChart, 
         polarAreaChart: polarAreaChart, 
-        radarChart: radarChart
+        radarChart: radarChart, 
+        responsiveChartConfig: responsiveChartConfig
     };
 })();
 var PS = PS || {};
@@ -4214,35 +4234,7 @@ PS.Example = (function () {
     var Graphics_Canvas = PS.Graphics_Canvas;
     var Data_Maybe = PS.Data_Maybe;
     var Control_Monad_Eff_Exception = PS.Control_Monad_Eff_Exception;
-    var Data_Traversable = PS.Data_Traversable;
-    var Control_Monad_Eff_Random = PS.Control_Monad_Eff_Random;
     var Control_Monad_Eff = PS.Control_Monad_Eff;
-    var zipRandom = function (f) {
-        return function (as) {
-            return Data_Traversable.traverse(Data_Traversable.traversableArray)(Control_Monad_Eff.applicativeEff)(function (a) {
-                return Prelude["<$>"](Control_Monad_Eff.functorEff)(f(a))(Control_Monad_Eff_Random.random);
-            })(as);
-        };
-    };
-    var responsiveConf = function (a) {
-        var _767 = {};
-        for (var _768 in a) {
-            if (a.hasOwnProperty(_768)) {
-                _767[_768] = a[_768];
-            };
-        };
-        _767.global = (function () {
-            var _765 = {};
-            for (var _766 in a.global) {
-                if (a.global.hasOwnProperty(_766)) {
-                    _765[_766] = a.global[_766];
-                };
-            };
-            _765.responsive = true;
-            return _765;
-        })();
-        return _767;
-    };
     var pieDoughnutData = [ {
         value: 300, 
         color: "#F7464A", 
@@ -4293,19 +4285,19 @@ PS.Example = (function () {
             } ]
         };
         return function __do() {
-            ChartJs.radarChart(c)(radarData)(responsiveConf(ChartJs.defRadarChartConfig))();
+            ChartJs.radarChart(c)(radarData)(ChartJs.responsiveChartConfig(ChartJs.defRadarChartConfig))();
             return Prelude.unit;
         };
     };
     var initPolarArea = function (c) {
         return function __do() {
-            ChartJs.polarAreaChart(c)(pieDoughnutData)(responsiveConf(ChartJs.defPolarAreaChartConfig))();
+            ChartJs.polarAreaChart(c)(pieDoughnutData)(ChartJs.responsiveChartConfig(ChartJs.defPolarAreaChartConfig))();
             return Prelude.unit;
         };
     };
     var initPie = function (c) {
         return function __do() {
-            ChartJs.pieChart(c)(pieDoughnutData)(responsiveConf(ChartJs.defPieChartConfig))();
+            ChartJs.pieChart(c)(pieDoughnutData)(ChartJs.responsiveChartConfig(ChartJs.defPieChartConfig))();
             return Prelude.unit;
         };
     };
@@ -4333,13 +4325,13 @@ PS.Example = (function () {
             } ]
         };
         return function __do() {
-            ChartJs.lineChart(c)(lineData)(responsiveConf(ChartJs.defLineChartConfig))();
+            ChartJs.lineChart(c)(lineData)(ChartJs.responsiveChartConfig(ChartJs.defLineChartConfig))();
             return Prelude.unit;
         };
     };
     var initDoughnut = function (c) {
         return function __do() {
-            ChartJs.doughnutChart(c)(pieDoughnutData)(responsiveConf(ChartJs.defDoughnutChartConfig))();
+            ChartJs.doughnutChart(c)(pieDoughnutData)(ChartJs.responsiveChartConfig(ChartJs.defDoughnutChartConfig))();
             return Prelude.unit;
         };
     };
@@ -4361,7 +4353,7 @@ PS.Example = (function () {
             } ]
         };
         return function __do() {
-            ChartJs.barChart(c)(barData)(responsiveConf(ChartJs.defBarChartConfig))();
+            ChartJs.barChart(c)(barData)(ChartJs.responsiveChartConfig(ChartJs.defBarChartConfig))();
             return Prelude.unit;
         };
     };
@@ -4395,9 +4387,7 @@ PS.Example = (function () {
         initPie: initPie, 
         initPolarArea: initPolarArea, 
         initRadar: initRadar, 
-        pieDoughnutData: pieDoughnutData, 
-        responsiveConf: responsiveConf, 
-        zipRandom: zipRandom
+        pieDoughnutData: pieDoughnutData
     };
 })();
 

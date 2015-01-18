@@ -32,6 +32,7 @@ module ChartJs
   , defPolarAreaChartConfig
   , defPieChartConfig
   , defDoughnutChartConfig
+  , responsiveChartConfig
   )where
 
 import Control.Monad.Eff
@@ -525,3 +526,9 @@ defPieDoughnutChartConfig cutout =
   , animateRotate          : true
   , animateScale           : false
   }
+
+responsiveChartConfig
+  :: forall r
+   . { global :: ChartConfig | r }
+  -> { global :: ChartConfig | r }
+responsiveChartConfig a = a { global = a.global { responsive = true } }

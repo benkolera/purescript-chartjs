@@ -2,7 +2,6 @@ module Example where
 
 import ChartJs
 import Control.Monad.Eff
-import Control.Monad.Eff.Random
 import Control.Monad.Eff.Exception
 import Data.Maybe
 import Data.Traversable
@@ -18,15 +17,12 @@ initGraphs = do
   initGraph "doughnut-canvas" initDoughnut
   initGraph "pie-canvas" initPie
 
-responsiveConf :: forall r. { global :: ChartConfig | r } -> { global :: ChartConfig | r }
-responsiveConf a = a { global = a.global { responsive = true } }
-
 initLine
   :: forall eff
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initLine c = do
-  lineChart c lineData (responsiveConf defLineChartConfig)
+  lineChart c lineData (responsiveChartConfig defLineChartConfig)
   pure unit
   where
     lineData = {
@@ -58,7 +54,7 @@ initBar
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initBar c = do
-  barChart c barData (responsiveConf defBarChartConfig)
+  barChart c barData (responsiveChartConfig defBarChartConfig)
   pure unit
   where
     barData = {
@@ -83,7 +79,7 @@ initRadar
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initRadar c = do
-  radarChart c radarData (responsiveConf defRadarChartConfig)
+  radarChart c radarData (responsiveChartConfig defRadarChartConfig)
   pure unit
   where
     radarData = {
@@ -114,7 +110,7 @@ initPolarArea
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initPolarArea c = do
-  polarAreaChart c pieDoughnutData (responsiveConf defPolarAreaChartConfig)
+  polarAreaChart c pieDoughnutData (responsiveChartConfig defPolarAreaChartConfig)
   pure unit
 
 initPie
@@ -122,7 +118,7 @@ initPie
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initPie c = do
-  pieChart c pieDoughnutData (responsiveConf defPieChartConfig)
+  pieChart c pieDoughnutData (responsiveChartConfig defPieChartConfig)
   pure unit
 
 initDoughnut
@@ -130,7 +126,7 @@ initDoughnut
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initDoughnut c = do
-  doughnutChart c pieDoughnutData (responsiveConf defDoughnutChartConfig)
+  doughnutChart c pieDoughnutData (responsiveChartConfig defDoughnutChartConfig)
   pure unit
 
 
@@ -175,10 +171,3 @@ initGraph cId f = do
 
 die :: forall eff a. String -> Eff( err:: Exception | eff ) a
 die = error >>> throwException
-
-zipRandom
-  :: forall eff a b
-   . (a -> Number -> b)
-  -> [a]
-  -> Eff ( random :: Random | eff ) [b]
-zipRandom f as = traverse (\ a -> f a <$> random) as

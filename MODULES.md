@@ -69,5 +69,7 @@
 
     radarChart :: forall eff. Chart -> RadarChartData -> RadarChartConfig -> Eff (dom :: DOM | eff) ChartType
 
+    responsiveChartConfig :: forall r. { global :: ChartConfig | r } -> { global :: ChartConfig | r }
+
 
 
