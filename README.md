@@ -1,6 +1,8 @@
 # purescript-chartjs
 Purescript bindings for chartjs
 
+Install via bower: bower install --save purescript-chartjs
+
 View the module documentation [here](MODULES.md).
 
 Check out the [example](example/) directory for an example usage.
