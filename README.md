@@ -2,10 +2,9 @@
 Purescript bindings for [chartjs](http://chartjs.org).
 
 Note that right now it doesn't allow you to:
-  * Configure the graphs since the defaults worked for me initially. Working on that next!
-  * Call any of the ChartType functions (update,remove,onClick,etc)
+  * Call any of the ChartType functions (update,remove,onClick,generateLegend,etc)
 
-## Installation 
+## Installation
 ```
 bower install --save purescript-chartjs
 ```
@@ -17,4 +16,3 @@ View the module documentation [here](MODULES.md).
 ## Example Usage
 
 Check out the [example](example/) directory for an example usage.
-

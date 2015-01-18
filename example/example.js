@@ -3931,30 +3931,8 @@ var PS = PS || {};
 PS.ChartJs = (function () {
     "use strict";
     var Prelude = PS.Prelude;
-    function RadarChartConfig() {
-
-    };
-    RadarChartConfig.value = new RadarChartConfig();
-    function PolarAreaChartConfig() {
-
-    };
-    PolarAreaChartConfig.value = new PolarAreaChartConfig();
-    function PieChartConfig() {
-
-    };
-    PieChartConfig.value = new PieChartConfig();
-    function LineChartConfig() {
-
-    };
-    LineChartConfig.value = new LineChartConfig();
-    function DoughnutChartConfig() {
-
-    };
-    DoughnutChartConfig.value = new DoughnutChartConfig();
-    function BarChartConfig() {
-
-    };
-    BarChartConfig.value = new BarChartConfig();
+    var Data_Maybe = PS.Data_Maybe;
+    var Control_Monad_Eff = PS.Control_Monad_Eff;
     
   function newChart (ctx) {
     return function () {
@@ -3967,7 +3945,14 @@ PS.ChartJs = (function () {
     return function (data) {
       return function (config) {
         return function () {
-          return chart.Line(data,config);
+          var allConf = {};
+          for ( var a in config.global ) { allConf[a] = config.global[a] }
+          for ( var a in config ) {
+            if ( a !== "global" ) {
+              allConf[a] = config[a];
+            }
+          }
+          return chart.Line(data,allConf);
         }
       }
     }
@@ -3978,7 +3963,14 @@ PS.ChartJs = (function () {
     return function (data) {
       return function (config) {
         return function () {
-          return chart.Bar(data,config);
+          var allConf = {};
+          for ( var a in config.global ) { allConf[a] = config.global[a] }
+          for ( var a in config ) {
+            if ( a !== "global" ) {
+              allConf[a] = config[a];
+            }
+          }
+          return chart.Bar(data,allConf);
         }
       }
     }
@@ -3989,7 +3981,14 @@ PS.ChartJs = (function () {
     return function (data) {
       return function (config) {
         return function () {
-          return chart.Radar(data,config);
+          var allConf = {};
+          for ( var a in config.global ) { allConf[a] = config.global[a] }
+          for ( var a in config ) {
+            if ( a !== "global" ) {
+              allConf[a] = config[a];
+            }
+          }
+          return chart.Radar(data,allConf);
         }
       }
     }
@@ -4000,7 +3999,14 @@ PS.ChartJs = (function () {
     return function (data) {
       return function (config) {
         return function () {
-          return chart.PolarArea(data,config);
+          var allConf = {};
+          for ( var a in config.global ) { allConf[a] = config.global[a] }
+          for ( var a in config ) {
+            if ( a !== "global" ) {
+              allConf[a] = config[a];
+            }
+          }
+          return chart.PolarArea(data,allConf);
         }
       }
     }
@@ -4011,7 +4017,14 @@ PS.ChartJs = (function () {
     return function (data) {
       return function (config) {
         return function () {
-          return chart.Doughnut(data,config);
+          var allConf = {};
+          for ( var a in config.global ) { allConf[a] = config.global[a] }
+          for ( var a in config ) {
+            if ( a !== "global" ) {
+              allConf[a] = config[a];
+            }
+          }
+          return chart.Doughnut(data,allConf);
         }
       }
     }
@@ -4022,20 +4035,169 @@ PS.ChartJs = (function () {
     return function (data) {
       return function (config) {
         return function () {
-          return chart.Pie(data,config);
+          var allConf = {};
+          for ( var a in config.global ) { allConf[a] = config.global[a] }
+          for ( var a in config ) {
+            if ( a !== "global" ) {
+              allConf[a] = config[a];
+            }
+          }
+          return chart.Pie(data,allConf);
         }
       }
     }
   }
   ;
+    var defGlobalChartConfig = {
+        animation: true, 
+        animationSteps: 60, 
+        animationEasing: "easeOutQuart", 
+        showScale: true, 
+        scaleOverride: false, 
+        scaleSteps: Data_Maybe.Nothing.value, 
+        scaleStepWidth: Data_Maybe.Nothing.value, 
+        scaleStartValue: Data_Maybe.Nothing.value, 
+        scaleLineColor: "rgba(0,0,0,.1)", 
+        scaleLineWidth: 1, 
+        scaleShowLabels: true, 
+        scaleLabel: "<%=value%>", 
+        scaleIntegersOnly: true, 
+        scaleBeginAtZero: false, 
+        scaleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif", 
+        scaleFontSize: 12, 
+        scaleFontStyle: "normal", 
+        scaleFontColor: "#666", 
+        responsive: false, 
+        maintainAspectRatio: true, 
+        showTooltips: true, 
+        customTooltips: false, 
+        tooltipEvents: [ "mousemove", "touchstart", "touchmove" ], 
+        tooltipFillColor: "rgba(0,0,0,0.8)", 
+        tooltipFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif", 
+        tooltipFontSize: 14, 
+        tooltipFontStyle: "normal", 
+        tooltipFontColor: "#fff", 
+        tooltipTitleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif", 
+        tooltipTitleFontSize: 14, 
+        tooltipTitleFontStyle: "bold", 
+        tooltipTitleFontColor: "#fff", 
+        tooltipYPadding: 6, 
+        tooltipXPadding: 6, 
+        tooltipCaretSize: 8, 
+        tooltipCornerRadius: 6, 
+        tooltipXOffset: 10, 
+        tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %>", 
+        multiTooltipTemplate: "<%= value %>", 
+        onAnimationProgress: Prelude["return"](Control_Monad_Eff.monadEff)(Prelude.unit), 
+        onAnimationComplete: Prelude["return"](Control_Monad_Eff.monadEff)(Prelude.unit), 
+        legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+    };
+    var defLineChartConfig = {
+        global: defGlobalChartConfig, 
+        scaleShowGridLines: true, 
+        scaleGridLineColor: "rgba(0,0,0,.05)", 
+        scaleGridLineWidth: 1, 
+        scaleShowHorizontalLines: true, 
+        scaleShowVerticalLines: true, 
+        bezierCurve: true, 
+        bezierCurveTension: 0.4, 
+        pointDot: true, 
+        pointDotRadius: 4, 
+        pointDotStrokeWidth: 1, 
+        pointHitDetectionRadius: 20, 
+        datasetStroke: true, 
+        datasetStrokeWidth: 2, 
+        datasetFill: true
+    };
+    var defPieDoughnutChartConfig = function (cutout) {
+        return {
+            global: (function () {
+                var _761 = {};
+                for (var _762 in defGlobalChartConfig) {
+                    if (defGlobalChartConfig.hasOwnProperty(_762)) {
+                        _761[_762] = defGlobalChartConfig[_762];
+                    };
+                };
+                _761.animationSteps = 100;
+                _761.animationEasing = "easeOutBounce";
+                return _761;
+            })(), 
+            segmentShowStroke: true, 
+            segmentStrokeColor: "#fff", 
+            segmentStrokeWidth: 2, 
+            percentageInnerCutout: cutout, 
+            animateRotate: true, 
+            animateScale: false
+        };
+    };
+    var defPieChartConfig = defPieDoughnutChartConfig(0);
+    var defPolarAreaChartConfig = {
+        global: (function () {
+            var _763 = {};
+            for (var _764 in defGlobalChartConfig) {
+                if (defGlobalChartConfig.hasOwnProperty(_764)) {
+                    _763[_764] = defGlobalChartConfig[_764];
+                };
+            };
+            _763.animationSteps = 100;
+            _763.animationEasing = "easeOutBounce";
+            return _763;
+        })(), 
+        scaleShowLabelBackdrop: true, 
+        scaleBackdropColor: "rgba(255,255,255,0.75)", 
+        scaleBeginAtZero: true, 
+        scaleBackdropPaddingY: 2, 
+        scaleBackdropPaddingX: 2, 
+        scaleShowLine: true, 
+        segmentShowStroke: true, 
+        segmentStrokeColor: "#fff", 
+        segmentStrokeWidth: 2, 
+        animateRotate: true, 
+        animateScale: false
+    };
+    var defRadarChartConfig = {
+        global: defGlobalChartConfig, 
+        scaleShowLine: true, 
+        angleShowLineOut: true, 
+        scaleShowLabels: false, 
+        scaleBeginAtZero: true, 
+        angleLineColor: "rgba(0,0,0,.1)", 
+        angleLineWidth: 1, 
+        pointLabelFontFamily: "'Arial'", 
+        pointLabelFontStyle: "normal", 
+        pointLabelFontSize: 10, 
+        pointLabelFontColor: "#666", 
+        pointDot: true, 
+        pointDotRadius: 3, 
+        pointDotStrokeWidth: 1, 
+        pointHitDetectionRadius: 20, 
+        datasetStroke: true, 
+        datasetStrokeWidth: 2, 
+        datasetFill: true
+    };
+    var defDoughnutChartConfig = defPieDoughnutChartConfig(50);
+    var defBarChartConfig = {
+        global: defGlobalChartConfig, 
+        scaleBeginAtZero: true, 
+        scaleShowGridLines: true, 
+        scaleGridLineColor: "rgba(0,0,0,.05)", 
+        scaleGridLineWidth: 1, 
+        scaleShowHorizontalLines: true, 
+        scaleShowVerticalLines: true, 
+        barShowStroke: true, 
+        barStrokeWidth: 2, 
+        barValueSpacing: 5, 
+        barDatasetSpacing: 1
+    };
     return {
-        BarChartConfig: BarChartConfig, 
-        DoughnutChartConfig: DoughnutChartConfig, 
-        LineChartConfig: LineChartConfig, 
-        PieChartConfig: PieChartConfig, 
-        PolarAreaChartConfig: PolarAreaChartConfig, 
-        RadarChartConfig: RadarChartConfig, 
         barChart: barChart, 
+        defBarChartConfig: defBarChartConfig, 
+        defDoughnutChartConfig: defDoughnutChartConfig, 
+        defGlobalChartConfig: defGlobalChartConfig, 
+        defLineChartConfig: defLineChartConfig, 
+        defPieChartConfig: defPieChartConfig, 
+        defPolarAreaChartConfig: defPolarAreaChartConfig, 
+        defRadarChartConfig: defRadarChartConfig, 
         doughnutChart: doughnutChart, 
         lineChart: lineChart, 
         newChart: newChart, 
@@ -4061,6 +4223,25 @@ PS.Example = (function () {
                 return Prelude["<$>"](Control_Monad_Eff.functorEff)(f(a))(Control_Monad_Eff_Random.random);
             })(as);
         };
+    };
+    var responsiveConf = function (a) {
+        var _767 = {};
+        for (var _768 in a) {
+            if (a.hasOwnProperty(_768)) {
+                _767[_768] = a[_768];
+            };
+        };
+        _767.global = (function () {
+            var _765 = {};
+            for (var _766 in a.global) {
+                if (a.global.hasOwnProperty(_766)) {
+                    _765[_766] = a.global[_766];
+                };
+            };
+            _765.responsive = true;
+            return _765;
+        })();
+        return _767;
     };
     var pieDoughnutData = [ {
         value: 300, 
@@ -4112,19 +4293,19 @@ PS.Example = (function () {
             } ]
         };
         return function __do() {
-            ChartJs.radarChart(c)(radarData)(ChartJs.RadarChartConfig.value)();
+            ChartJs.radarChart(c)(radarData)(responsiveConf(ChartJs.defRadarChartConfig))();
             return Prelude.unit;
         };
     };
     var initPolarArea = function (c) {
         return function __do() {
-            ChartJs.polarAreaChart(c)(pieDoughnutData)(ChartJs.PolarAreaChartConfig.value)();
+            ChartJs.polarAreaChart(c)(pieDoughnutData)(responsiveConf(ChartJs.defPolarAreaChartConfig))();
             return Prelude.unit;
         };
     };
     var initPie = function (c) {
         return function __do() {
-            ChartJs.pieChart(c)(pieDoughnutData)(ChartJs.PieChartConfig.value)();
+            ChartJs.pieChart(c)(pieDoughnutData)(responsiveConf(ChartJs.defPieChartConfig))();
             return Prelude.unit;
         };
     };
@@ -4152,13 +4333,13 @@ PS.Example = (function () {
             } ]
         };
         return function __do() {
-            ChartJs.lineChart(c)(lineData)(ChartJs.LineChartConfig.value)();
+            ChartJs.lineChart(c)(lineData)(responsiveConf(ChartJs.defLineChartConfig))();
             return Prelude.unit;
         };
     };
     var initDoughnut = function (c) {
         return function __do() {
-            ChartJs.doughnutChart(c)(pieDoughnutData)(ChartJs.DoughnutChartConfig.value)();
+            ChartJs.doughnutChart(c)(pieDoughnutData)(responsiveConf(ChartJs.defDoughnutChartConfig))();
             return Prelude.unit;
         };
     };
@@ -4180,7 +4361,7 @@ PS.Example = (function () {
             } ]
         };
         return function __do() {
-            ChartJs.barChart(c)(barData)(ChartJs.BarChartConfig.value)();
+            ChartJs.barChart(c)(barData)(responsiveConf(ChartJs.defBarChartConfig))();
             return Prelude.unit;
         };
     };
@@ -4215,6 +4396,7 @@ PS.Example = (function () {
         initPolarArea: initPolarArea, 
         initRadar: initRadar, 
         pieDoughnutData: pieDoughnutData, 
+        responsiveConf: responsiveConf, 
         zipRandom: zipRandom
     };
 })();

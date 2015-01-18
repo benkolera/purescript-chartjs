@@ -18,12 +18,15 @@ initGraphs = do
   initGraph "doughnut-canvas" initDoughnut
   initGraph "pie-canvas" initPie
 
+responsiveConf :: forall r. { global :: ChartConfig | r } -> { global :: ChartConfig | r }
+responsiveConf a = a { global = a.global { responsive = true } }
+
 initLine
   :: forall eff
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initLine c = do
-  lineChart c lineData LineChartConfig
+  lineChart c lineData (responsiveConf defLineChartConfig)
   pure unit
   where
     lineData = {
@@ -55,7 +58,7 @@ initBar
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initBar c = do
-  barChart c barData BarChartConfig
+  barChart c barData (responsiveConf defBarChartConfig)
   pure unit
   where
     barData = {
@@ -80,7 +83,7 @@ initRadar
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initRadar c = do
-  radarChart c radarData RadarChartConfig
+  radarChart c radarData (responsiveConf defRadarChartConfig)
   pure unit
   where
     radarData = {
@@ -111,7 +114,7 @@ initPolarArea
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initPolarArea c = do
-  polarAreaChart c pieDoughnutData PolarAreaChartConfig
+  polarAreaChart c pieDoughnutData (responsiveConf defPolarAreaChartConfig)
   pure unit
 
 initPie
@@ -119,7 +122,7 @@ initPie
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initPie c = do
-  pieChart c pieDoughnutData PieChartConfig
+  pieChart c pieDoughnutData (responsiveConf defPieChartConfig)
   pure unit
 
 initDoughnut
@@ -127,7 +130,7 @@ initDoughnut
    . Chart
   -> Eff ( dom :: DOM , err :: Exception, canvas:: Canvas | eff ) Unit
 initDoughnut c = do
-  doughnutChart c pieDoughnutData DoughnutChartConfig
+  doughnutChart c pieDoughnutData (responsiveConf defDoughnutChartConfig)
   pure unit
 
 
