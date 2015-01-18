@@ -29,3 +29,7 @@ npm install
 bower install
 gulp watch-browser
 ```
+
+Then open up example/index.html in your browser. Any changes will
+force a recompile of example.js which you'll need to refresh the page
+in your browser to see your changes.
