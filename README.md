@@ -9,7 +9,7 @@ Note that right now it doesn't allow you to:
 bower install --save purescript-chartjs
 ```
 
-## Documentations
+## Documentation
 
 View the module documentation [here](MODULES.md).
 
