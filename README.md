@@ -1,7 +1,7 @@
 # purescript-chartjs
 Purescript bindings for chartjs
 
-View the module documentation [here](MODULE.md) 
+View the module documentation [here](MODULES.md).
 
 Check out the [example](example/) directory for an example usage.
 
