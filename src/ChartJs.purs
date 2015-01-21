@@ -46,7 +46,7 @@ import Graphics.Canvas
 foreign import data Chart :: *
 foreign import data ChartType :: *
 
-type ChartConfig =
+type ChartConfig r =
   { animation              :: Boolean
   , animationSteps         :: Number
   , animationEasing        :: String
@@ -88,6 +88,7 @@ type ChartConfig =
   , multiTooltipTemplate   :: String
   , onAnimationProgress    :: Eff ( dom :: DOM ) Unit
   , onAnimationComplete    :: Eff ( dom :: DOM ) Unit
+  | r
   }
 
 type LineChartData =
@@ -106,9 +107,8 @@ type LineChartDataset =
   , data                 :: [Number]
   }
 
-type LineChartConfig =
-  { global                   :: ChartConfig
-  , scaleShowGridLines       :: Boolean
+type LineChartConfig = ChartConfig
+  ( scaleShowGridLines       :: Boolean
   , scaleGridLineColor       :: String
   , scaleGridLineWidth       :: Number
   , scaleShowHorizontalLines :: Boolean
@@ -123,7 +123,7 @@ type LineChartConfig =
   , datasetStroke            :: Boolean
   , datasetStrokeWidth       :: Number
   , datasetFill              :: Boolean
-  }
+  )
 
 type BarChartData =
   { labels   :: [String]
@@ -138,9 +138,8 @@ type BarChartDataset =
   , data            :: [Number]
   }
 
-type BarChartConfig =
-  { global                   :: ChartConfig
-  , scaleBeginAtZero         :: Boolean
+type BarChartConfig = ChartConfig
+  ( scaleBeginAtZero         :: Boolean
   , scaleShowGridLines       :: Boolean
   , scaleGridLineColor       :: String
   , scaleGridLineWidth       :: Number
@@ -151,7 +150,7 @@ type BarChartConfig =
   , barStrokeWidth           :: Number
   , barValueSpacing          :: Number
   , barDatasetSpacing        :: Number
-  }
+  )
 
 type RadarChartData =
   { labels   :: [String]
@@ -167,9 +166,8 @@ type RadarChartDataset =
   , pointHighlightStroke :: String
   , data                 :: [Number]
   }
-type RadarChartConfig =
-  { global                  :: ChartConfig
-  , scaleShowLine           :: Boolean
+type RadarChartConfig = ChartConfig
+  ( scaleShowLine           :: Boolean
   , angleShowLineOut        :: Boolean
   , scaleShowLabels         :: Boolean
   , scaleBeginAtZero        :: Boolean
@@ -187,7 +185,7 @@ type RadarChartConfig =
   , datasetStroke           :: Boolean
   , datasetStrokeWidth      :: Number
   , datasetFill             :: Boolean
-  }
+  )
 
 type PolarAreaChartData =
   { value     :: Number
@@ -196,9 +194,8 @@ type PolarAreaChartData =
   , highlight :: String
   }
 
-type PolarAreaChartConfig =
-  { global                 :: ChartConfig
-  , scaleShowLabelBackdrop :: Boolean
+type PolarAreaChartConfig = ChartConfig
+  ( scaleShowLabelBackdrop :: Boolean
   , scaleBackdropColor     :: String
   , scaleBeginAtZero       :: Boolean
   , scaleBackdropPaddingY  :: Number
@@ -210,7 +207,7 @@ type PolarAreaChartConfig =
   , segmentStrokeWidth     :: Number
   , animateRotate          :: Boolean
   , animateScale           :: Boolean
-  }
+  )
 
 type DoughnutChartData =
   { value     :: Number
@@ -226,16 +223,15 @@ type PieChartData =
   , highlight :: String
   }
 
-type PieDoughnutChartConfig =
-  { global :: ChartConfig
-  , segmentShowStroke      :: Boolean
+type PieDoughnutChartConfig = ChartConfig
+  ( segmentShowStroke      :: Boolean
   , segmentStrokeColor     :: String
   , segmentStrokeWidth     :: Number
   , legendTemplate         :: String
   , percentageInnerCutout  :: Number
   , animateRotate          :: Boolean
   , animateScale           :: Boolean
-  }
+  )
 
 foreign import newChart
   """
@@ -248,7 +244,7 @@ foreign import newChart
 
 -- Yanking Chart.defaults.global and parsing in with foreign may be
 -- better
-defGlobalChartConfig :: ChartConfig
+defGlobalChartConfig :: ChartConfig ()
 defGlobalChartConfig =
   { animation: true
   , animationSteps: 60
@@ -299,14 +295,7 @@ foreign import lineChart
     return function (data) {
       return function (config) {
         return function () {
-          var allConf = {};
-          for ( var a in config.global ) { allConf[a] = config.global[a] }
-          for ( var a in config ) {
-            if ( a !== "global" ) {
-              allConf[a] = config[a];
-            }
-          }
-          return chart.Line(data,allConf);
+          return chart.Line(data,config);
         }
       }
     }
@@ -318,23 +307,22 @@ foreign import lineChart
       -> Eff (dom :: DOM | eff ) ChartType
 
 defLineChartConfig :: LineChartConfig
-defLineChartConfig =
-  { global                   : defGlobalChartConfig
-  , scaleShowGridLines       : true
-  , scaleGridLineColor       : "rgba(0,0,0,.05)"
-  , scaleGridLineWidth       : 1
-  , scaleShowHorizontalLines : true
-  , scaleShowVerticalLines   : true
-  , bezierCurve              : true
-  , bezierCurveTension       : 0.4
-  , pointDot                 : true
-  , pointDotRadius           : 4
-  , pointDotStrokeWidth      : 1
-  , pointHitDetectionRadius  : 20
-  , datasetStroke            : true
-  , datasetStrokeWidth       : 2
-  , datasetFill              : true
-  , legendTemplate           : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+defLineChartConfig = defGlobalChartConfig
+  { scaleShowGridLines       = true
+  , scaleGridLineColor       = "rgba(0,0,0,.05)"
+  , scaleGridLineWidth       = 1
+  , scaleShowHorizontalLines = true
+  , scaleShowVerticalLines   = true
+  , bezierCurve              = true
+  , bezierCurveTension       = 0.4
+  , pointDot                 = true
+  , pointDotRadius           = 4
+  , pointDotStrokeWidth      = 1
+  , pointHitDetectionRadius  = 20
+  , datasetStroke            = true
+  , datasetStrokeWidth       = 2
+  , datasetFill              = true
+  , legendTemplate           = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
   }
 
 foreign import barChart
@@ -343,14 +331,7 @@ foreign import barChart
     return function (data) {
       return function (config) {
         return function () {
-          var allConf = {};
-          for ( var a in config.global ) { allConf[a] = config.global[a] }
-          for ( var a in config ) {
-            if ( a !== "global" ) {
-              allConf[a] = config[a];
-            }
-          }
-          return chart.Bar(data,allConf);
+          return chart.Bar(data,config);
         }
       }
     }
@@ -362,19 +343,18 @@ foreign import barChart
       -> Eff (dom :: DOM | eff ) ChartType
 
 defBarChartConfig :: BarChartConfig
-defBarChartConfig =
-  { global                   : defGlobalChartConfig
-  , scaleBeginAtZero         : true
-  , scaleShowGridLines       : true
-  , scaleGridLineColor       : "rgba(0,0,0,.05)"
-  , scaleGridLineWidth       : 1
-  , scaleShowHorizontalLines : true
-  , scaleShowVerticalLines   : true
-  , barShowStroke            : true
-  , barStrokeWidth           : 2
-  , barValueSpacing          : 5
-  , barDatasetSpacing        : 1
-  , legendTemplate           : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+defBarChartConfig = defGlobalChartConfig
+  { scaleBeginAtZero         = true
+  , scaleShowGridLines       = true
+  , scaleGridLineColor       = "rgba(0,0,0,.05)"
+  , scaleGridLineWidth       = 1
+  , scaleShowHorizontalLines = true
+  , scaleShowVerticalLines   = true
+  , barShowStroke            = true
+  , barStrokeWidth           = 2
+  , barValueSpacing          = 5
+  , barDatasetSpacing        = 1
+  , legendTemplate           = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
   }
 
 foreign import radarChart
@@ -383,14 +363,7 @@ foreign import radarChart
     return function (data) {
       return function (config) {
         return function () {
-          var allConf = {};
-          for ( var a in config.global ) { allConf[a] = config.global[a] }
-          for ( var a in config ) {
-            if ( a !== "global" ) {
-              allConf[a] = config[a];
-            }
-          }
-          return chart.Radar(data,allConf);
+          return chart.Radar(data,config);
         }
       }
     }
@@ -402,26 +375,25 @@ foreign import radarChart
       -> Eff (dom :: DOM | eff ) ChartType
 
 defRadarChartConfig :: RadarChartConfig
-defRadarChartConfig =
-  { global                  : defGlobalChartConfig
-  , scaleShowLine           : true
-  , angleShowLineOut        : true
-  , scaleShowLabels         : false
-  , scaleBeginAtZero        : true
-  , angleLineColor          : "rgba(0,0,0,.1)"
-  , angleLineWidth          : 1
-  , pointLabelFontFamily    : "'Arial'"
-  , pointLabelFontStyle     : "normal"
-  , pointLabelFontSize      : 10
-  , pointLabelFontColor     : "#666"
-  , pointDot                : true
-  , pointDotRadius          : 3
-  , pointDotStrokeWidth     : 1
-  , pointHitDetectionRadius : 20
-  , datasetStroke           : true
-  , datasetStrokeWidth      : 2
-  , datasetFill             : true
-  , legendTemplate          : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+defRadarChartConfig = defGlobalChartConfig
+  { scaleShowLine           = true
+  , angleShowLineOut        = true
+  , scaleShowLabels         = false
+  , scaleBeginAtZero        = true
+  , angleLineColor          = "rgba(0,0,0,.1)"
+  , angleLineWidth          = 1
+  , pointLabelFontFamily    = "'Arial'"
+  , pointLabelFontStyle     = "normal"
+  , pointLabelFontSize      = 10
+  , pointLabelFontColor     = "#666"
+  , pointDot                = true
+  , pointDotRadius          = 3
+  , pointDotStrokeWidth     = 1
+  , pointHitDetectionRadius = 20
+  , datasetStroke           = true
+  , datasetStrokeWidth      = 2
+  , datasetFill             = true
+  , legendTemplate          = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
   }
 
 
@@ -431,14 +403,7 @@ foreign import polarAreaChart
     return function (data) {
       return function (config) {
         return function () {
-          var allConf = {};
-          for ( var a in config.global ) { allConf[a] = config.global[a] }
-          for ( var a in config ) {
-            if ( a !== "global" ) {
-              allConf[a] = config[a];
-            }
-          }
-          return chart.PolarArea(data,allConf);
+          return chart.PolarArea(data,config);
         }
       }
     }
@@ -450,23 +415,21 @@ foreign import polarAreaChart
       -> Eff (dom :: DOM | eff ) ChartType
 
 defPolarAreaChartConfig :: PolarAreaChartConfig
-defPolarAreaChartConfig =
-  { global                 : defGlobalChartConfig
-    { animationSteps  = 100
-    , animationEasing = "easeOutBounce"
-    }
-  , scaleShowLabelBackdrop : true
-  , scaleBackdropColor     : "rgba(255,255,255,0.75)"
-  , scaleBeginAtZero       : true
-  , scaleBackdropPaddingY  : 2
-  , scaleBackdropPaddingX  : 2
-  , scaleShowLine          : true
-  , segmentShowStroke      : true
-  , segmentStrokeColor     : "#fff"
-  , segmentStrokeWidth     : 2
-  , animateRotate          : true
-  , animateScale           : false
-  , legendTemplate         : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
+defPolarAreaChartConfig = defGlobalChartConfig
+  { animationSteps         = 100
+  , animationEasing        = "easeOutBounce"
+  , scaleShowLabelBackdrop = true
+  , scaleBackdropColor     = "rgba(255,255,255,0.75)"
+  , scaleBeginAtZero       = true
+  , scaleBackdropPaddingY  = 2
+  , scaleBackdropPaddingX  = 2
+  , scaleShowLine          = true
+  , segmentShowStroke      = true
+  , segmentStrokeColor     = "#fff"
+  , segmentStrokeWidth     = 2
+  , animateRotate          = true
+  , animateScale           = false
+  , legendTemplate         = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
   }
 
 foreign import doughnutChart
@@ -475,14 +438,7 @@ foreign import doughnutChart
     return function (data) {
       return function (config) {
         return function () {
-          var allConf = {};
-          for ( var a in config.global ) { allConf[a] = config.global[a] }
-          for ( var a in config ) {
-            if ( a !== "global" ) {
-              allConf[a] = config[a];
-            }
-          }
-          return chart.Doughnut(data,allConf);
+          return chart.Doughnut(data,config);
         }
       }
     }
@@ -499,14 +455,7 @@ foreign import pieChart
     return function (data) {
       return function (config) {
         return function () {
-          var allConf = {};
-          for ( var a in config.global ) { allConf[a] = config.global[a] }
-          for ( var a in config ) {
-            if ( a !== "global" ) {
-              allConf[a] = config[a];
-            }
-          }
-          return chart.Pie(data,allConf);
+          return chart.Pie(data,config);
         }
       }
     }
@@ -525,24 +474,20 @@ defDoughnutChartConfig = defPieDoughnutChartConfig 50
 
 defPieDoughnutChartConfig :: Number -> PieDoughnutChartConfig
 defPieDoughnutChartConfig cutout =
-  { global                 : defGlobalChartConfig
-    { animationSteps  = 100
-    , animationEasing = "easeOutBounce"
+  defGlobalChartConfig
+    { animationSteps         = 100
+    , animationEasing        = "easeOutBounce"
+    , segmentShowStroke      = true
+    , segmentStrokeColor     = "#fff"
+    , segmentStrokeWidth     = 2
+    , percentageInnerCutout  = cutout
+    , animateRotate          = true
+    , animateScale           = false
+    , legendTemplate         = "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
     }
-  , segmentShowStroke      : true
-  , segmentStrokeColor     : "#fff"
-  , segmentStrokeWidth     : 2
-  , percentageInnerCutout  : cutout
-  , animateRotate          : true
-  , animateScale           : false
-  , legendTemplate         : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
-  }
 
-responsiveChartConfig
-  :: forall r
-   . { global :: ChartConfig | r }
-  -> { global :: ChartConfig | r }
-responsiveChartConfig a = a { global = a.global { responsive = true } }
+responsiveChartConfig :: forall r . ChartConfig r -> ChartConfig r
+responsiveChartConfig a = a { responsive = true }
 
 foreign import generateLegend
   """
