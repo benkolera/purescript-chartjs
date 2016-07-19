@@ -73,7 +73,7 @@ gulp.task('browser', function() {
 });
 
 gulp.task('make', function() {
-    return compile(purescript.pscMake, [paths.src].concat(paths.bowerSrc), {})
+    return compile(purescript.psc, [paths.src].concat(paths.bowerSrc), {})
         .pipe(gulp.dest(paths.dest))
 });
 
